@@ -1,17 +1,27 @@
 /* ========================================= */
-/* 1. GENEL AYARLAR VE SIFIRLAMA             */
+/* 1. TEMEL AYARLAR VE IOS SAFARI FIXLERİ    */
 /* ========================================= */
-body {
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;          /* Fallback */
+    height: 100dvh;        /* Modern mobil tarayıcılar için dinamik yükseklik */
+    overflow: hidden;      /* Sayfanın genelinin kaymasını engelle */
+    position: fixed;       /* iOS'ta sayfanın yaylanmasını (rubber-banding) önler */
+    
     background-color: #2c3e50;
     font-family: 'Press Start 2P', cursive;
     color: white;
-    text-align: center;
-    margin: 0;
+    
+    /* İçerikleri dikeyde hizalamak için Flexbox */
     display: flex;
     flex-direction: column;
-    height: 100vh;       /* Ekranın tamamını kapla */
-    overflow: hidden;    /* Kaydırma çubuklarını gizle */
-    touch-action: manipulation; 
+    justify-content: space-between;
+    
+    /* Dokunma gecikmesini önle */
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .hidden { display: none !important; }
@@ -24,13 +34,14 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    height: 100%;
     width: 100%;
     padding-bottom: 50px;
     box-sizing: border-box;
+    overflow-y: auto; /* Küçük ekranlarda içerik taşarsa kaydır */
 }
 
-/* Lobby Inputları (Pixel Görünüm) */
+/* Lobby Inputları */
 #lobby-screen input {
     font-family: 'Press Start 2P', cursive;
     padding: 15px;
@@ -39,14 +50,17 @@ body {
     box-shadow: 4px 4px 0px #000;
     background-color: white;
     color: black;
-    font-size: 16px;
     text-align: center;
     width: 80%;
     max-width: 400px;
     outline: none;
+    
+    /* iOS Input Zoom Engelleme: Font en az 16px olmalı */
+    font-size: 16px; 
 }
+
 #lobby-screen input:focus {
-    background-color: #f1c40f; /* Sarı odaklanma rengi */
+    background-color: #f1c40f;
 }
 
 /* ========================================= */
@@ -55,57 +69,45 @@ body {
 #game-screen {
     height: 100%;
     width: 100%;
-    
-    /* Ekranı dikey olarak 3 parçaya bölüyoruz */
     display: flex;
     flex-direction: column; 
     justify-content: space-between;
     align-items: center;
-    
     background-color: #2c3e50;
-}
-/* Eğer #game-screen diye kapsayıcı bir div kullanıyorsan ona da ver */
-
-
-
-/* === BAŞLANGIÇ EKRANI DÜZENLEMESİ === */
-
-/* 1. Eğer resim kaynağı (src) boşsa, o resmi gizle. 
-   Böylece kırık resim ikonu görünmez. */
-img[src=""] {
-    display: none;
+    
+    /* Alt kısım güvenli alan */
+    padding-bottom: env(safe-area-inset-bottom);
 }
 
-/* 2. Başlangıçtaki READY yazısı için stil */
+/* --- BAŞLANGIÇ EKRANI (READY MODU) --- */
+img[src=""] { display: none; }
+
 .ready-mode {
-    font-size: 24px !important; /* Biraz büyük olsun */
-    color: #f1c40f !important;  /* Gri renk */
+    font-size: 24px !important;
+    color: #f1c40f !important;
     text-shadow: 3px 3px 0 #c0392b;
     letter-spacing: 2px;
-    margin-top: 50px;           /* Logo olmadığı için biraz aşağı insin */
-    animation: blinkReady 1.5s infinite; /* Yanıp sönsün */
+    margin-top: 50px;
+    animation: blinkReady 1.5s infinite;
 }
 
-/* Yanıp Sönme Animasyonu */
 @keyframes blinkReady {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.4; }
 }
 
 /* --- A. ÜST PANEL (%15) --- */
-/* Butonların duracağı alan */
 .game-header {
-    height: 15vh;        /* Ekranın %15'i */
+    flex: 0 0 15%; /* Sabit %15 yükseklik */
     width: 100%;
     display: flex;
-    justify-content: center; /* Yan yana ortala */
-    align-items: center;     /* Dikey ortala */
-    gap: 15px;               /* Butonlar arası boşluk */
-    z-index: 20;             /* En üstte dursun */
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    z-index: 20;
     padding-top: 10px;
 }
 
-/* Üst Panel Butonları */
 .header-btn {
     padding: 10px 15px;
     font-size: 10px;
@@ -114,28 +116,25 @@ img[src=""] {
 }
 
 /* --- B. ORTA PANEL (Esnek Alan) --- */
-/* Logoların ve skorun duracağı alan */
 .match-center-area {
-    flex-grow: 1;        /* Kalan tüm boşluğu doldur (%15 ve %40 haricini) */
+    flex: 1; /* Kalan tüm boşluğu doldur */
     width: 100%;
-    
     display: flex;
     flex-direction: column;
-    justify-content: center; /* İçindekileri tam ortala */
+    justify-content: center;
     align-items: center;
-    
-    padding-bottom: 20px; /* Sahaya çok yapışmasın */
+    padding-bottom: 20px;
     position: relative;
+    overflow: hidden; /* Taşmaları gizle */
 }
 
-/* Maç Tablosu (Logo - VS - Logo) */
+/* Maç Tablosu */
 .match-board {
     display: flex;
     justify-content: center;
     align-items: center; 
     width: 95%;
     max-width: 800px;    
-    margin: 0; /* Margin yok, Flexbox ortalıyor */
 }
 
 .team {
@@ -146,7 +145,7 @@ img[src=""] {
 }
 
 .team img {
-    /* Responsive Resim: Ekran yüksekliğine göre boyutlan */
+    /* Responsive Resim: Ekran yüksekliğine göre oranla */
     width: 12vh;
     height: 12vh;
     max-width: 120px;
@@ -169,42 +168,21 @@ img[src=""] {
     margin: 0 5px;
 }
 
-/* === GERİ SAYIM ANİMASYONU (ESKİ HALİ) === */
+/* Geri Sayım Animasyonu */
+.match-board.loading .team { opacity: 0; transition: opacity 0.3s; }
 
-/* Takımları gizle (Sadece sayı görünsün) */
-.match-board.loading .team {
-    opacity: 0; 
-    transition: opacity 0.3s;
-}
-
-/* Sayacın Kendisi (3-2-1 yazısı) */
 .match-board.loading .vs {
-    /* Animasyon Kodu: 'countPulse' isimli efekti 0.8 saniyede bir tekrarla */
     animation: countPulse 0.8s ease-in-out infinite;
-    font-size: 60px;  /* Büyük olsun */
-    z-index: 100;     /* En üstte */
+    font-size: 60px;
+    z-index: 100;
 }
 
-/* Animasyonun Tarifi (Renk ve Boyut Değişimi) */
 @keyframes countPulse {
-    0% {
-        transform: scale(1);
-        color: white;
-        text-shadow: 4px 4px 0 #000;
-    }
-    50% {
-        transform: scale(1.5); /* Büyü */
-        color: #f1c40f;        /* Sarı ol */
-        text-shadow: 6px 6px 0 #c0392b; /* Kırmızı gölge (Havalı kısım burası) */
-    }
-    100% {
-        transform: scale(1);
-        color: white;
-        text-shadow: 4px 4px 0 #000;
-    }
+    0% { transform: scale(1); color: white; text-shadow: 4px 4px 0 #000; }
+    50% { transform: scale(1.5); color: #f1c40f; text-shadow: 6px 6px 0 #c0392b; }
+    100% { transform: scale(1); color: white; text-shadow: 4px 4px 0 #000; }
 }
 
-/* Yeni Maç Butonu */
 .match-btn {
     margin-top: 20px;
     font-size: 12px;
@@ -213,18 +191,13 @@ img[src=""] {
 
 /* --- C. ALT PANEL (SAHA - %40) --- */
 .field {
-    /* Yüksekliği yüzde veya vh yerine flex ile doldur */
-    flex: 1; 
-    max-height: 40%; /* Ekranın en fazla %40'ını kaplasın */
-    
-    background-color: #2ecc71; /* Çim rengi */
+    flex: 0 0 40%; /* Sabit %40 yükseklik */
+    max-height: 40vh;
+    background-color: #2ecc71;
     width: 100%;
-    
     display: flex;
     justify-content: center;
-    align-items: flex-end; /* Oyuncuları en alta yapıştır */
-    
-    /* Mobilde oyuncular çok aşağı yapışmasın diye biraz boşluk */
+    align-items: flex-end;
     padding-bottom: 20px; 
 }
 
@@ -234,7 +207,7 @@ img[src=""] {
     align-items: flex-end;   
     width: 100%;
     height: 100%;
-    gap: 30px; /* Oyuncular arası boşluk */
+    gap: 30px; 
 }
 
 .player-wrapper {
@@ -247,7 +220,7 @@ img[src=""] {
 /* 4. FUTBOLCU KARTLARI VE SKOR              */
 /* ========================================= */
 .pixel-player {
-    width: 140px;  /* Biraz daha ideal boyut */
+    width: 140px;
     height: 200px; 
     background-size: contain;
     background-repeat: no-repeat;
@@ -264,7 +237,7 @@ img[src=""] {
     height: 40px;
     background-color: transparent;
     position: absolute;
-    top: 90px; /* İsim konumu */
+    top: 90px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -293,12 +266,7 @@ img[src=""] {
     border: 3px solid white;
 }
 
-.score-val {
-    font-size: 20px;
-    color: white;
-    min-width: 30px;
-    text-align: center;
-}
+.score-val { font-size: 20px; color: white; min-width: 30px; text-align: center; }
 
 .control-btn {
     background: #f1c40f;
@@ -315,69 +283,106 @@ img[src=""] {
 .control-btn:active { box-shadow: 0 0 0; transform: translate(2px, 2px); }
 
 /* ========================================= */
-/* 5. ARAMA EKRANI (TAM EKRAN OVERLAY)       */
+/* 5. ARAMA VE CEVAP EKRANLARI (FIXED LAYOUT)*/
 /* ========================================= */
-#search-screen {
+/* Bu yapı iOS'ta header ve footer'ı sabit tutar, ortayı kaydırır */
+
+#search-screen, 
+#answers-screen {
     position: fixed;
     top: 0;
     left: 0;
+    right: 0;
+    bottom: 0;
     width: 100%;
     height: 100dvh;
     background-color: #2c3e50;
     z-index: 9999;
+    
+    display: flex;
+    flex-direction: column; 
+    align-items: center;/* Alt alta diz */
+    overflow: hidden;       /* Ana kapsayıcı kaymasın */
+}
+
+/* ÜST KISIMLAR (Sabit) */
+.scout-header, 
+.scout-search-wrapper,
+.screen-header {
+    flex: 0 0 auto; /* Boyut değişmesin */
+    width: 100%;
+    text-align: center;
+    padding: 20px 0;
+    background-color: #2c3e50;
+    z-index: 10;
+}
+
+/* ORTA KISIMLAR (Kaydırılabilir) */
+/* Hem arama sonuçları, hem kariyer, hem cevaplar buraya girer */
+#career-container,
+#answers-grid,
+.answers-grid {
+    flex: 1 1 auto;       /* Kalan tüm boşluğu doldur */
+    overflow-y: auto;     /* Sadece burası scroll olsun */
+    -webkit-overflow-scrolling: touch; /* iOS'ta akıcı kaydırma */
+    
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    
     display: flex;
     flex-direction: column;
     align-items: center;
-    overflow-y: auto;
-    padding-top: 50px;
-    /* iPhone Alt Çubuğu (Safe Area) Payı */
-    padding-bottom: calc(20px + env(safe-area-inset-bottom)); 
-    box-sizing: border-box;
 }
 
+/* ALT KISIMLAR (Sabit Buton) */
 #search-screen > div:last-child,
-#answers-screen > div:last-child {
-    flex-shrink: 0; /* Asla ezilmesin */
-    margin-top: auto; /* En alta it */
+#answers-screen > .screen-footer {
+    flex: 0 0 auto;
+    margin-top: auto;
     width: 100%;
     text-align: center;
-    background-color: #2c3e50; /* Arkası şeffaf olmasın */
-    padding-top: 10px;
+    background-color: #2c3e50;
+    padding: 15px 0;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    
+    /* iPhone Alt Çubuğu Payı */
+    padding-bottom: calc(15px + env(safe-area-inset-bottom)); 
+    z-index: 20;
 }
 
-
-.scout-header, 
-.scout-search-wrapper {
-    flex-shrink: 0; /* Asla küçülmesin */
-    width: 100%;
-    text-align: center;
-}
-
+/* --- Arama Kutusu ve Liste --- */
 .scout-input {
-    width: 100%;
-    box-sizing: border-box;
+    width: 90%;
+    max-width: 400px;
     padding: 15px;
-    font-size: 14px;
-    text-align: left;
+    font-size: 16px; /* Zoom fix */
     background-color: #ecf0f1;
     color: #2c3e50;
     border: 4px solid #000;
     font-family: 'Press Start 2P';
     outline: none;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.scout-search-wrapper { position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: center;
 }
 
 .suggestions-box {
     position: absolute;
     top: 100%;
-    left: 0;
-    width: 100%;
+    left: 5%; /* Ortala */
+    width: 90%;
     background-color: #34495e;
     border: 4px solid #000;
     border-top: none;
     max-height: 250px;
     overflow-y: auto;
     z-index: 10000;
-    box-sizing: border-box;
 }
 
 .hidden-list { display: none !important; }
@@ -422,7 +427,7 @@ img[src=""] {
     padding: 15px;
     font-family: 'Press Start 2P';
     cursor: pointer;
-    margin: 10px;
+    margin: 5px;
     box-shadow: 4px 4px 0px #000;
     max-width: 90%; 
 }
@@ -430,18 +435,80 @@ img[src=""] {
 .pixel-btn.active { background-color: #f1c40f; color: black; }
 
 /* ========================================= */
-/* 6. MOBİL UYUMLULUK                        */
+/* 6. GRID VE KART AYARLARI                  */
+/* ========================================= */
+
+/* Kariyer tablosu soldan hizalı */
+#career-grid {
+    width: 100%;
+    flex-direction: row; /* Yan yana diz */
+    flex-wrap: wrap;     /* Sığmazsa aşağı geç */
+    justify-content: center; /* Ortala */
+    gap: 10px;
+}
+
+/* Cevap tablosu */
+#answers-grid {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+}
+
+.answer-card {
+    background-color: #34495e;
+    border: 3px solid white;
+    border-radius: 8px;
+    padding: 10px;
+    width: 130px;
+    height: 180px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s;
+    box-shadow: 3px 3px 0 #000;
+}
+
+.answer-card:hover {
+    transform: scale(1.05);
+    background-color: #9b59b6;
+    border-color: #f1c40f;
+    z-index: 10;
+}
+
+.answer-card img {
+    width: 90px;
+    height: 120px;
+    border-radius: 5px;
+    border: 2px solid white;
+    margin-bottom: 10px;
+    object-fit: cover;
+    background-color: #fff;
+}
+
+.answer-card span {
+    font-size: 11px;
+    text-align: center;
+    line-height: 1.3;
+    color: white;
+    font-family: 'Press Start 2P', cursive;
+}
+
+/* ========================================= */
+/* 7. MEDIA QUERIES (MOBİL AYARLARI)         */
 /* ========================================= */
 @media (max-width: 768px) {
     /* Başlık */
-    .game-header { height: 12vh; }
+    .game-header { flex: 0 0 12%; }
     
     /* Logolar */
     .team img { width: 10vh; height: 10vh; }
     .team h2 { font-size: 10px; }
     
     /* Saha ve Oyuncular */
-    .field { height: 40vh; }
+    .field { flex: 0 0 45%; } /* Mobilde sahayı biraz daha büyüt */
     #players-container { gap: 10px; }
     
     .pixel-player {
@@ -459,118 +526,41 @@ img[src=""] {
 }
 
 @media (max-height: 600px) {
-    /* Çok kısa ekranlar için */
-    .game-header { height: 15vh; }
-    .field { height: 45vh; }
-}
-/* ========================================= */
-/* ORTAK KART ALANI (Hem Cevaplar Hem Kariyer) */
-/* ========================================= */
-
-#answers-grid {
-    flex: 1; /* Kalan tüm boşluğu kapla */
-    width: 95%;
-    overflow-y: auto; /* Sadece burası scroll olsun */
-    min-height: 0; /* Flex yapısında scroll hatasını önler */
-    
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 10px;
-}
-
-
-
-/* === ÖZEL AYAR: KARİYER GEÇMİŞİ === */
-/* Kariyer tablosu ortada değil, SOLDA başlasın */
-#career-grid {
-    height: auto !important; /* HTML'deki style'ı ezer */
-    width: 100%;
-    justify-content: flex-start !important;
+    .game-header { flex: 0 0 15%; }
+    .field { flex: 0 0 45%; }
 }
 
 /* ========================================= */
-/* KART TASARIMI (Sabit Boyutlar)            */
-/* ========================================= */
-.answer-card {
-    background-color: #34495e;
-    border: 3px solid white;
-    border-radius: 8px;
-    padding: 10px;
-    
-    /* Sabit boyutlar */
-    width: 130px;
-    height: 180px;
-    flex-shrink: 0;
-    
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    
-    transition: transform 0.2s;
-    box-shadow: 3px 3px 0 #000;
-}
-
-.answer-card:hover {
-    transform: scale(1.05);
-    background-color: #9b59b6;
-    border-color: #f1c40f;
-    z-index: 10;
-}
-
-/* Kart İçindeki Resim */
-.answer-card img {
-    width: 90px;
-    height: 120px;
-    border-radius: 5px; /* Kare */
-    border: 2px solid white;
-    margin-bottom: 10px;
-    object-fit: cover;
-    background-color: #fff;
-}
-
-/* Kart İçindeki İsim */
-.answer-card span {
-    font-size: 11px;
-    text-align: center;
-    line-height: 1.3;
-    color: white;
-    font-family: 'Press Start 2P', cursive;
-}
-
-/* ========================================= */
-/* MODERN TEMA (OVERRIDE)                    */
+/* 8. MODERN TEMA (OVERRIDE)                 */
 /* ========================================= */
 
-/* 1. Genel Sayfa Yapısı */
+/* Genel */
 body.modern-theme {
-    font-family: 'Poppins', sans-serif !important; /* Fontu değiştir */
-    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); /* Düz renk yerine degrade */
-    letter-spacing: 0; /* Piksel fontun boşluklarını kapat */
+    font-family: 'Poppins', sans-serif !important;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    letter-spacing: 0;
 }
 
-/* 2. Inputlar ve Butonlar */
+/* Inputlar ve Butonlar */
 body.modern-theme .pixel-input,
 body.modern-theme .scout-input,
 body.modern-theme #lobby-screen input {
     border: none;
-    border-radius: 12px; /* Köşeleri yuvarla */
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2); /* Sert gölge yerine yumuşak gölge */
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     font-family: 'Poppins', sans-serif;
     padding: 15px;
-    transition: all 0.3s ease;
 }
 
-body.modern-theme .pixel-btn {
+body.modern-theme .pixel-btn, 
+body.modern-theme .header-btn {
     border: none;
-    border-radius: 50px; /* Tam yuvarlak butonlar */
+    border-radius: 50px;
     box-shadow: 0 4px 6px rgba(0,0,0,0.3);
     font-family: 'Poppins', sans-serif;
     font-weight: 800;
     text-transform: uppercase;
-    transform: none !important; /* Tıklama efektini yumuşat */
-    transition: transform 0.2s, box-shadow 0.2s;
+    transform: none !important;
 }
 
 body.modern-theme .pixel-btn:hover {
@@ -578,41 +568,36 @@ body.modern-theme .pixel-btn:hover {
     box-shadow: 0 6px 12px rgba(0,0,0,0.4);
 }
 
-body.modern-theme .pixel-btn:active {
-    transform: translateY(1px) !important;
-}
-
-/* 3. Kartlar ve Kutular */
+/* Kartlar */
 body.modern-theme .answer-card,
 body.modern-theme .score-board,
 body.modern-theme .result-box {
     border: 1px solid rgba(255,255,255,0.2);
     border-radius: 16px;
-    background-color: rgba(255, 255, 255, 0.15); /* Yarı saydam cam efekti */
-    backdrop-filter: blur(10px); /* Arka planı bulanıklaştır */
+    background-color: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
     font-family: 'Poppins', sans-serif;
 }
 
-/* Kart içindeki yazılar */
 body.modern-theme .answer-card span,
 body.modern-theme h1, 
 body.modern-theme h2, 
 body.modern-theme p {
     font-family: 'Poppins', sans-serif !important;
-    text-shadow: none !important; /* Siyah gölgeleri kaldır */
+    text-shadow: none !important;
     font-weight: 600;
 }
 
-/* 4. Resimler */
+/* Resimler */
 body.modern-theme .answer-card img,
 body.modern-theme .suggestion-item img {
-    border-radius: 50% !important; /* Resimleri tam yuvarlak yap */
+    border-radius: 50% !important;
     border: 3px solid rgba(255,255,255,0.8);
     box-shadow: 0 4px 8px rgba(0,0,0,0.3);
 }
 
-/* 5. Arama Listesi */
+/* Liste */
 body.modern-theme .suggestions-box {
     border: none;
     border-radius: 12px;
@@ -621,34 +606,9 @@ body.modern-theme .suggestions-box {
     font-family: 'Poppins', sans-serif;
 }
 
-/* 6. Saha ve Çim */
+/* Saha */
 body.modern-theme .field {
     border-top: none;
-    background: linear-gradient(to top, #27ae60, #2ecc71); /* Daha canlı çim */
+    background: linear-gradient(to top, #27ae60, #2ecc71);
     box-shadow: 0 -10px 20px rgba(0,0,0,0.2);
 }
-
-/* === MOBİL UYUMLULUK VE TEMEL AYARLAR === */
-html, body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    
-    /* Eskiden 100vh yapıyorduk, iPhone'da patlıyordu. 
-       Şimdi 'dvh' (Dynamic Height) kullanıyoruz. 
-       Bu, adres çubuğunu hesaba katar. */
-    height: 100dvh; 
-    
-    overflow: hidden; /* Sayfanın kaymasını engelle */
-    background-color: #2c3e50; /* Arka plan rengin */
-    font-family: 'Press Start 2P', cursive; /* Senin fontun */
-    
-    /* İçerikleri dikeyde hizalamak için Flexbox */
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between; /* Üst, orta ve altı yay */
-    
-    /* iPhone X ve üzeri için alttaki siyah çubuğa pay bırak */
-    padding-bottom: env(safe-area-inset-bottom); 
-}
-

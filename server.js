@@ -67,18 +67,34 @@ app.get('/get-match', async (req, res) => {
 });
 
 // 2. ARAMA: Oyuncu Ara
+// 2. ARAMA: Oyuncu Ara (Özel Karakter Destekli)
 app.get('/api/search-list', async (req, res) => {
     const q = req.query.q;
+    // En az 3 harf şartı
     if (!q || q.length < 3) return res.json({ results: [] });
 
     try {
-        const sql = `SELECT id, name, image FROM players WHERE name LIKE ? LIMIT 10`;
-        const players = await query(sql, [`%${q}%`]);
+        // === ÖZEL KARAKTER ÇÖZÜMÜ ===
+        // 1. Önce gelen kelimeyi küçük harfe çevir.
+        // 2. Riskli harfleri (sesliler ve noktalı ünsüzler) '_' ile değiştir.
+        // Bu sayede "sükür" yazınca "s_k_r" aranır ve "Şükür" bulunur.
+        
+        const safeQ = q.toLowerCase()
+            // Tüm sesli harfleri ve noktalı harf ihtimallerini joker karakter (_) yapıyoruz
+            .replace(/[aeıioöuüscgçğş]/g, '_')
+            // Accents (Ó, Á vb.) varsa onları ayırıp base harfe indirgeyip tekrar _ yap
+            .normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[aeıioöuüscgçğş]/g, '_');
+
+        // Normalde '%q%' yapıyorduk, şimdi '%safeQ%' yapıyoruz
+        // Örnek: 'brahim' -> '%br_h_m%' olarak aranacak
+        
+        const sql = `SELECT id, name, image FROM players WHERE lower(name) LIKE ? LIMIT 10`;
+        const players = await query(sql, [`%${safeQ}%`]);
 
         const results = players.map(p => ({
             id: p.id,
             name: p.name,
-            photo: p.image ? p.image : 'https://media.api-sports.io/football/players/1.png'
+            photo: p.image ? p.image : 'https://media.api-sports.io/football/players/158.png' // Default Messi fotosu (id 1 genelde boştur, 158 Messi)
         }));
 
         res.json({ results });
@@ -169,7 +185,7 @@ app.get('/api/get-player-teams', async (req, res) => {
             return res.status(400).json({ error: "Oyuncu ID eksik" });
         }
 
-        console.log(`📚 Kariyer sorgulanıyor: Oyuncu ID ${playerId}`);
+       // console.log(`📚 Kariyer sorgulanıyor: Oyuncu ID ${playerId}`);
 
         const sql = `
             SELECT t.name, t.logo 
