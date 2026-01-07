@@ -1,0 +1,20 @@
+# Bağımlılıklar (Sunucu kendisi kuracak)
+node_modules/
+
+# Gizli veriler (API Key vs.)
+.env
+
+# Editör/IDE Ayarları (Gereksiz kalabalık yapmasın)
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# İşletim Sistemi Dosyaları (Mac kullananlar için)
+.DS_Store
+
+# Hata Logları
+npm-debug.log*
+
+# --- NOT: futbol.db BURAYA EKLENMEMELİDİR ---
+# Çünkü oyunun verileri onun içinde.

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3-2-1 Player</title>
+
+    <link rel="icon" href="favicon.ico">
+
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+    <div id="lobby-screen">
+        <h1>3-2-1 PLAYER</h1>
+
+        <div style="margin-bottom: 20px;">
+    <button onclick="toggleTheme()" id="theme-btn" class="pixel-btn" style="background-color: #34495e; font-size: 10px; width: auto; padding: 10px;">
+        🎨 RETRO
+    </button>
+</div>
+
+        <div class="player-count-selector">
+            <button onclick="setPlayerCount(2)" class="pixel-btn active" id="btn-2p">2 Players</button>
+            <button onclick="setPlayerCount(3)" class="pixel-btn" id="btn-3p">3 Players</button>
+        </div>
+
+        <div id="inputs-area">
+        </div>
+
+        <button onclick="startGame()" class="pixel-btn start-btn">Start Game</button>
+    </div>
+
+    <div id="game-screen" class="hidden">
+
+        <div class="game-header">
+
+            <button id="scout-btn" onclick="openSearchScreen()" class="pixel-btn header-btn">
+                🔍 SEARCH
+            </button>
+
+            <button id="answers-btn" onclick="openAnswersScreen()" class="pixel-btn header-btn"
+                style="background-color: #9b59b6; border-color: #8e44ad;">
+                💡 ANSWERS
+            </button>
+
+        </div>
+
+        <div class="match-center-area">
+
+            <div class="match-board">
+
+                <div class="team">
+                    <img id="home-logo" src="" alt="Ev">
+                    <h2 id="home-name" class="ready-mode">READY</h2>
+                </div>
+
+                <div class="vs">VS</div>
+
+                <div class="team">
+                    <img id="away-logo" src="" alt="Dep">
+                    <h2 id="away-name" class="ready-mode">READY</h2>
+                </div>
+
+            </div>
+
+            <button onclick="fetchMatch()" class="pixel-btn match-btn">NEW MATCH</button>
+        </div>
+
+        <div class="field">
+            <div id="players-container"></div>
+        </div>
+
+    </div>
+
+    <div id="search-screen" class="hidden">
+
+    <h1 style="margin-top: 50px; color: #f1c40f; text-shadow: 4px 4px 0 #000;">SCOUT CREW</h1>
+    <p style="font-size: 12px; margin-bottom: 30px; color: #bdc3c7;">PLAYER DATABASE</p>
+
+    <div class="scout-search-wrapper">
+        <input type="text" id="player-input" placeholder="Enter player name..." class="pixel-input scout-input" autocomplete="off">
+        <div id="suggestions-box" class="suggestions-box hidden-list"></div>
+    </div>
+
+    <button onclick="checkPlayer()" class="pixel-btn" style="background-color: #3498db; border-color: #2980b9; width: 300px;">
+        CHECK
+    </button>
+    
+    <button onclick="getPlayerCareer()" class="pixel-btn" style="background-color: #e67e22; border-color: #d35400; margin-top: 10px; width: 300px;">
+        📜 SHOW ALL CAREER
+    </button>
+
+    <div id="search-result" class="result-box hidden"></div>
+
+    <div id="career-container" class="hidden" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+        <h3 style="font-size: 12px; color: #f39c12; margin: 15px 0;">CAREER HISTORY</h3>
+        <div id="career-grid" class="answers-grid" style="height: 40vh;">
+            </div>
+    </div>
+
+    <div style="margin-top: auto; margin-bottom: 50px;">
+        <button onclick="closeSearchScreen()" class="pixel-btn" style="background-color: #95a5a6; border-color: #7f8c8d;">
+            🔙 BACK TO MATCH
+        </button>
+    </div>
+
+</div>
+
+
+    <div id="answers-screen" class="hidden">
+        <h1 style="margin-top: 30px; color: #9b59b6; text-shadow: 4px 4px 0 #000;">ANSWERS KEY</h1>
+        <p style="font-size: 10px; margin-bottom: 20px; color: #bdc3c7;">COMMON PLAYERS</p>
+
+        <div id="answers-grid" class="answers-grid">
+            <p>Loading...</p>
+        </div>
+
+        <div style="margin-top: auto; margin-bottom: 30px;">
+            <button onclick="closeAnswersScreen()" class="pixel-btn"
+                style="background-color: #95a5a6; border-color: #7f8c8d;">
+                🔙 BACK TO MATCH
+            </button>
+        </div>
+    </div>
+
+
+
+
+    <script src="search.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
